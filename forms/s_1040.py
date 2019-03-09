@@ -72,7 +72,7 @@ from . import s3_1040
 from . import s4_1040
 from . import s5_1040
 from . import f_8606
-from . import worksheet__tax
+from . import worksheet__capital_gains
 from . import worksheet__child_credit
 from . import constants
 
@@ -272,7 +272,7 @@ def build_data(short_circuit = ''):
     if short_circuit == 'Tax Worksheet':
         return data_dict
 
-    worksheet = worksheet__tax.build_data()
+    worksheet = worksheet__capital_gains.build_data()
     tax_due = worksheet['final_tax_on_income_unrounded']
     data_dict['tax_amount'] = str(int(round(tax_due, 0))) + ' '
 
