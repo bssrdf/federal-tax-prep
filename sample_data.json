@@ -194,7 +194,7 @@
     "medical_expenses": 500.50,
 
     "educator_expenses": 0,
-    "student_loan_interest_deduction": 100.50,
+    "student_loan_interest": 100.50,
     "traditional_ira_deduction": 5500,
     "health_savings_acct_deduction": 0,
 

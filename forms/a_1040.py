@@ -91,9 +91,7 @@ def build_data():
     
     utils.add_keyed_float(total_state_local, 'total_state_local', data_dict)
 
-    max_deductible_state_tax = constants.get_value("MAX_DEDUCTIBLE_STATE_TAX")
-    if filing_status == "married_separate":
-        max_deductible_state_tax /= 2
+    max_deductible_state_tax = constants.get_value("MAX_DEDUCTIBLE_STATE_TAX", filing_status)
     floor = min(total_state_local, max_deductible_state_tax)
     utils.add_keyed_float(floor, 'floor_taxes', data_dict)
     

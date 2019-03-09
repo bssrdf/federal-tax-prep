@@ -89,8 +89,6 @@ def qualified_business_deduction(taxable_income, schedule_1, filing_status="sing
         return 0
 
     qbi_threshold = constants.get_value("QBI_THRESHOLD", filing_status)
-    if filing_status == "married_joint":
-        qbi_threshold *= 2
 
     if taxable_income > qbi_threshold:
         raise Exception("Taxable income exceeds QBI deduction threshold -- Not Implemented!")
@@ -134,7 +132,7 @@ def build_data(short_circuit = ''):
     data_dict = {}
 
     schedule_b  = b_1040.build_data()
-    schedule_1 = s1_1040.build_data()
+    schedule_1 = s1_1040.build_data(f1040_data=data_dict)
     schedule_3 = s3_1040.build_data()
     schedule_4 = s4_1040.build_data()
     schedule_5 = s5_1040.build_data()
@@ -236,12 +234,17 @@ def build_data(short_circuit = ''):
 
     total_income = utils.dollars_cents_to_float(data_dict['total_income_dollars'],
                                                 data_dict['total_income_cents'])
-    adjustments  = utils.dollars_cents_to_float(schedule_1['adjustments_dollars'],
+
+    if short_circuit == "Schedule 1":
+        return data_dict
+
+    # Recompute Schedule 1 adjustments based on total income
+    schedule_1 = s1_1040.build_data(f1040_data=data_dict)
+    adjustments = utils.dollars_cents_to_float(schedule_1['adjustments_dollars'],
                                                 schedule_1['adjustments_cents'])
     
-    AGI = total_income - adjustments
-
-    utils.add_keyed_float(AGI, 'adjusted_gross_income', data_dict)
+    agi = total_income - adjustments
+    utils.add_keyed_float(agi, 'adjusted_gross_income', data_dict)
 
     if short_circuit == 'Schedule A':
         return data_dict
@@ -254,16 +257,15 @@ def build_data(short_circuit = ''):
 
     standard_deduction = compute_standard_deduction(data_dict, filing_status)
 
-    deduction = max(itemized_deduction, standard_deduction)
-    utils.add_keyed_float(deduction, 'deductions', data_dict)
+    deduction_claim = max(itemized_deduction, standard_deduction)
+    utils.add_keyed_float(deduction_claim, 'deductions', data_dict)
     
-    taxable_income = AGI - deduction
+    taxable_income = agi - deduction_claim
 
     # This is weird ... the IRS says the QBI deduction calculation
     # involves taxable income, but taxable income depends on the
     # QBI deduction. 
     qbi_deduction = qualified_business_deduction(taxable_income, schedule_1, filing_status)
-    deduction += qbi_deduction
     taxable_income -= qbi_deduction
 
     utils.add_keyed_float(qbi_deduction, 'qualified_business_deductions', data_dict)

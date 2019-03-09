@@ -33,18 +33,38 @@ self-employment tax and SEP IRA contribution deductions.
 '''
 
 from . import utils
+from . import constants
 from . import cez_1040
 from . import se_1040
+from . import s_1040
 from . import worksheet__sep_ira
 
 data = utils.parse_values()
 
 ###################################
+
+def compute_student_loan_deduction(interest_amt, agi, filing_status):
+  _constants = constants.get_value("STUDENT_LOAN_DEDUCTION", filing_status)
+
+  if interest_amt > _constants["max_deduction"]:
+    interest_amt = _constants["max_deduction"]
+
+  if agi <= _constants["phaseout_begin_threshold"]:
+    return interest_amt
+
+  if agi < _constants["phaseout_end_threshold"]:
+    phaseout_range = _constants["phaseout_end_threshold"] - _constants["phaseout_begin_threshold"]
+    return 1.0 * interest_amt * (agi - _constants["phaseout_begin_threshold"]) / phaseout_range
+
+  return 0
+
     
-def build_data():
+def build_data(f1040_data=None):
 
     schedule_c  = cez_1040.build_data()
     schedule_se = se_1040.build_data()
+    if f1040_data is None:
+      f1040_data = s_1040.build_data(short_circuit="Schedule 1")
     sep_calcs   = worksheet__sep_ira.build_data()
 
     data_dict = {
@@ -101,8 +121,12 @@ def build_data():
       utils.add_keyed_float(data['traditional_ira_deduction'], 'ira', data_dict)
 
     # Student loan deduction
-    if 'student_loan_interest_deduction' in data:
-      utils.add_keyed_float(data['student_loan_interest_deduction'], 'loan_interest', data_dict)
+    if 'student_loan_interest' in data and f1040_data is not None:
+      if "total_income_dollars" in f1040_data:
+        temp_agi = utils.dollars_cents_to_float(f1040_data["total_income_dollars"],
+                                                f1040_data["total_income_cents"])
+        student_loan_deduction = compute_student_loan_deduction(data["student_loan_interest"], temp_agi, data["filing_status"])
+        utils.add_keyed_float(student_loan_deduction, 'loan_interest', data_dict)
 
     adjustments = ['educator', 'business_expenses',
                    'hsa', 'moving', 'self_employment',
@@ -115,8 +139,8 @@ def build_data():
 
     return data_dict
 
-def fill_in_form():
-    data_dict = build_data()
+def fill_in_form(f1040_data=None):
+    data_dict = build_data(f1040_data)
     data_dict['_width'] = 9
     basename = 'f1040s1.pdf'
     return utils.write_fillable_pdf(basename, data_dict, 's1.keys')
