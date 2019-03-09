@@ -66,12 +66,12 @@ def build_data():
 
 def fill_in_form():
     data_dict = build_data()
-    basename = 'SEP_IRA_Worksheet.pdf'
+    basename = 'worksheet__sep_ira.pdf'
 
     for each in data_dict:
         data_dict[each] = data_dict[each].replace('.', '')
 
-    return utils.write_fillable_pdf(basename, data_dict, 'sep_ira.keys')
+    return utils.write_fillable_pdf(basename, data_dict, 'worksheet__sep_ira.keys')
 
 
 if __name__ == '__main__':

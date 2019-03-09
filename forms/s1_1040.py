@@ -35,7 +35,7 @@ self-employment tax and SEP IRA contribution deductions.
 from . import utils
 from . import cez_1040
 from . import se_1040
-from . import sep_ira
+from . import worksheet__sep_ira
 
 data = utils.parse_values()
 
@@ -45,7 +45,7 @@ def build_data():
 
     schedule_c  = cez_1040.build_data()
     schedule_se = se_1040.build_data()
-    sep_calcs   = sep_ira.build_data()
+    sep_calcs   = worksheet__sep_ira.build_data()
 
     data_dict = {
         'name'             : data['name'],
