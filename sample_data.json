@@ -1,0 +1,231 @@
+{
+    "ssn": "123-45-6789",
+    "name": "Harry Potter",
+    "name_first": "Harry",
+    "name_middle": "James",
+    "name_middle_i": "J",
+    "name_last": "Potter",
+    "signature": "sample_signature.jpg",
+
+    "address": "4 Privet Dr",
+    "address_apt": "A",
+    "address_city": "Surrey",
+    "address_state": "MA",
+    "address_zip": "12345",
+
+    "filing_status": "married_joint",
+
+    "blind": "no",
+
+    "senior_citizen": "yes",
+
+    "occupation": "Auror",
+
+    "spouse":
+    {
+        "ssn": "234-56-7890",
+        "name": "Ginevra Weasley",
+        "name_first": "Ginevra",
+        "name_middle": "Molly",
+        "name_middle_i": "M",
+        "name_last": "Weasley"
+    },
+
+    "dependents": [
+    {
+        "name": "Lily L Potter",
+        "ssn": "345-67-8901",
+        "relationship": "daughter",
+        "age_under_17": "yes"
+    },
+    {
+        "name": "Albus S Potter",
+        "ssn": "456-78-9012",
+        "relationship": "son",
+        "age_under_17": "yes"
+    },
+    {
+        "name": "James S Potter",
+        "ssn": "567-89-0123",
+        "relationship": "son",
+        "age_under_17": "no"
+    }],
+
+    "w2": [
+    {
+        "income": 124000,
+        "ss_wages": 124000,
+        "federal_withheld": 19000,
+        "state_withheld": 5100
+    },
+    {
+        "income": 65000,
+        "ss_wages": 65000,
+        "federal_withheld": 8900,
+        "state_withheld": 2100
+    }],
+
+    "1099_misc": [
+    {
+        "other_income": 25012
+    }],
+
+    "qbi_deduction": true,
+
+    "1099_r": [
+    {
+        "type": "rollover",
+        "amount": 1000.50
+    },
+    {
+        "type": "backdoor_conversion",
+        "contribution": 5500.0,
+        "converted": 5550.0,
+        "total_basis": 100.0,
+        "nonroth_eoy": 100.0,
+        "distributions": 0.0
+    }],
+
+    "1099_int": [
+    {
+        "institution": "Bank 1",
+        "interest_income": 100.10
+    },
+    {
+        "institution": "Bank 2",
+        "interest_income": 200.20
+    },
+    {
+        "institution": "Bank 3",
+        "interest_income": 300.30
+    },
+    {
+        "institution": "Bank 4",
+        "interest_income": 400.40
+    }],
+
+    "1099_div": [
+    {
+        "institution": "Bank 1",
+        "total_ordinary": 500.50,
+        "total_qualified": 600.60,
+        "total_capital_gain": 700.70,
+        "foreign_tax": 10.00
+    },
+    {
+        "institution": "Bank 2",
+        "total_ordinary": 800.50,
+        "total_qualified": 900.60,
+        "total_capital_gain": 1000.70,
+        "foreign_tax": 20.00
+    },
+    {
+        "institution": "Bank 3",
+        "total_ordinary": 1100.50,
+        "total_qualified": 1200.60,
+        "total_capital_gain": 1300.70,
+        "foreign_tax": 30.00
+    }],
+
+    "business_exp": [
+    {
+        "description": "Expense 1",
+        "amount": 100.01
+    },
+    {
+        "description": "Expense 2",
+        "amount": 100.01
+    },
+    {
+        "description": "Expense 3",
+        "amount": 100.01
+    }],
+
+    "vehicle":
+    {
+        "dates": "1/1/18 - 12/31/18",
+        "mileage": 1000,
+        "mileage_rate": 0.545
+    },
+
+    "meals": 500.05,
+
+    "profession": "profession",
+    "profession_code": "123456",
+
+    "estimated_fed": [
+    {
+        "date": "2018-04-15",
+        "amount": 2000
+    },
+    {
+        "date": "2018-06-15",
+        "amount": 2000
+    },
+    {
+        "date": "2018-09-15",
+        "amount": 2000
+    },
+    {
+        "date": "2019-01-15",
+        "amount": 2000
+    }],
+
+    "estimated_state": [
+    {
+        "date": "2018-04-15",
+        "amount": 500
+    },
+    {
+        "date": "2018-06-15",
+        "amount": 500
+    },
+    {
+        "date": "2018-09-15",
+        "amount": 500
+    },
+    {
+        "date": "2019-01-15",
+        "amount": 500
+    }],
+
+    "state_due_last_year": 100,
+
+    "medical_expenses": 500.50,
+
+    "educator_expenses": 0,
+    "student_loan_interest_deduction": 100.50,
+    "traditional_ira_deduction": 5500,
+    "health_savings_acct_deduction": 0,
+
+    "donations_cash": [
+    {
+        "organization": "Organization 1",
+        "amount": 500
+    },
+    {
+        "organization": "Organization 2",
+        "amount": 410
+    },
+    {
+        "organization": "Organization 3",
+        "amount": 250
+    }],
+
+    "donations_noncash": [
+    {
+        "organization": "Organization 1",
+        "amount": 100
+    },
+    {
+        "organization": "Organization 2",
+        "amount": 200
+    },
+    {
+        "organization": "Organization 3",
+        "amount": 300
+    }],
+
+
+    "sep_percentage": 0.10
+}
