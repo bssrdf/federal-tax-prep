@@ -4,7 +4,7 @@ constants["STANDARD_DEDUCTION"] = {
 	"2018": {
 		"single":            12000,
 		"married_joint":     24000,
-		"widower":           24000,
+		"widowed":           24000,
 		"married_separate":  12000,
 		"head_of_household": 18000
 	}
@@ -15,19 +15,31 @@ constants["STANDARD_DEDUCTION+"] =  {
 	"2018": {
 		"single":            1600,
 		"married_joint":     1300,
-		"widower":           1300,
+		"widowed":           1300,
 		"married_separate":  1300,
 		"head_of_household": 1600
 	}
 }
 
+constants["STUDENT_LOAN_DEDUCTION"] = {
+	"2018": {
+		"single,married_separate,widowed,head_of_household": {
+			"phaseout_begin_threshold": 65000,
+			"phaseout_end_threshold": 80000,
+			"max_deduction": 2500
+		},
+		"married_joint": {
+			"phaseout_begin_threshold": 135000,
+			"phaseout_end_threshold": 165000,
+			"max_deduction": 2500
+		}
+	}
+}
+
 constants["DEPENDENTS_CREDIT_INCOME_THRESHOLD"] = {
 	"2018": {
-		"single":            200000,
-		"married_joint":     400000,
-		"widower":           200000,
-		"married_separate":  200000,
-		"head_of_household": 200000
+		"single,widowed,married_separate,head_of_household": 200000,
+		"married_joint": 400000
 	}
 }
 
@@ -39,13 +51,15 @@ constants["DEPENDENTS_CREDIT_AMT"] = {
 
 constants["QBI_THRESHOLD"] = {
 	"2018": {
-		"all": 157500
+		"single,widowed,married_separate,head_of_household": 157500,
+		"married_joint": 315000
 	}
 }
 
 constants["MAX_DEDUCTIBLE_STATE_TAX"] = {
 	"2018": {
-		"all": 10000
+		"single,widowed,married_joint,head_of_household": 10000,
+		"married_separate": 5000
 	}
 }
 
@@ -53,6 +67,10 @@ TAX_YEAR = "2018"
 
 def get_value(key, filing_status="single", tax_year=TAX_YEAR):
 	table = constants[key][tax_year]
+
+	for key in table.keys():
+		if filing_status in key:
+			return table[key]
 
 	if 'all' in table:
 		# same value for all filing statuses

@@ -16,7 +16,7 @@ file_single_y                           FEFF00630031005F00300031005B0030005D /Bt
 file_married_joint_y                    FEFF00630031005F00300031005B0031005D /Btn
 file_married_separate_y                 FEFF00630031005F00300031005B0032005D /Btn
 file_head_of_household_y                FEFF00630031005F00300031005B0033005D /Btn
-file_widower_y                          FEFF00630031005F00300031005B0034005D /Btn
+file_widowed_y                          FEFF00630031005F00300031005B0034005D /Btn
 widower                                 FEFF00660031005F00300031005B0030005D /Tx
 first_and_initial                       FEFF00660031005F00300032005B0030005D /Tx
 last                                    FEFF00660031005F00300033005B0030005D /Tx
