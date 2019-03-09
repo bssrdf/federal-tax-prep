@@ -8,6 +8,7 @@ Modified from: https://github.com/pyTaxPrep/taxes-2018 to support more tax situa
 
 + Support for non-single filing statuses
 + Additional adjustments to income (student loan interest, health savings, traditional IRA deductions)
++ Claim credits for children/other dependents
 + [In progress] Extract U.S. tax code "magic numbers" into `forms/constants.py` file (so they are easy to modify year-to-year)
 + Use official marginal tax brackets to compute tax amount, instead of hard-coded tables
 + Modularized for multiple tax years
@@ -22,19 +23,19 @@ The filer has moderately-complex taxes due to:
   - A combination of W2 and 1099-MISC income.
   - A sole proprietorship (Schedule C-EZ and SE). 
   - Money in bank accounts (1099-INT) and investment accounts (1099-DIV).
+  - Children or other dependents.
   - Estimated tax payments.
   - Contributions to a SEP IRA, rollovers from a SEP IRA, and/or a backdoor Roth conversion.
-  - Deductions (medical expenses and donations).
+  - Itemized deductions (medical expenses and donations).
 
 With that in mind, the following forms have some amount of support:
   - Form 1040 (Schedules 1, 4, 5, A, B, CEZ, and SE)
   - SEP IRA Contribution Worksheet
+  - Child and Other Dependents Credit Worksheet
   - Form 8606
 
 The filer is _not_:
   - A homeowner.
-  - Claiming tax credits on any dependents.
-
 
 ### Repository Layout
 
@@ -82,12 +83,13 @@ The filer is _not_:
 
 ### Adding Forms
 
-      - Add the original form to templates.
-      - Add a new Python file to the form in forms. Like the
+      - Add the blank PDF form to `templates/{tax_year}/` folder. 
+        Download latest from IRS: https://www.irs.gov/downloads/irs-pdf
+      - Add a new Python file for the form to `forms/`. Like the
         other files, it should have `fill_in_form` and `build_data`
         functions.
-      - Add a keyfile for the form to keyfiles. Running `python
-        forms/utils.py [form PDF]` can help by identifying the field
+      - Add a keyfile for the form to `keyfiles/{tax_year}/`. Running `python
+        pdf_utils/dump_file.py path/to/template.pdf` will identify field
         names; you'll need to create the readable names manually
         though.
       - If applicable, add "magic numbers" to `forms/constants.py`
