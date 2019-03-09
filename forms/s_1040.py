@@ -79,6 +79,7 @@ data = utils.parse_values()
 
 ###################################
 
+# https://www.irs.gov/newsroom/tax-cuts-and-jobs-act-provision-11011-section-199a-qualified-business-income-deduction-faqs
 def qualified_business_deduction(taxable_income, schedule_1, filing_status="single"):
     
     if 'qbi_deduction' not in data:
@@ -93,8 +94,6 @@ def qualified_business_deduction(taxable_income, schedule_1, filing_status="sing
     if taxable_income > qbi_threshold:
         raise Exception("Taxable income exceeds QBI deduction threshold -- Not Implemented!")
 
-    # https://www.irs.gov/newsroom/tax-cuts-and-jobs-act-provision-11011-section-199a-qualified-business-income-deduction-faqs
-    
     # The deduction is the lesser of:
 
     # A) 20 percent of the taxpayer’s QBI, plus 20 percent of the
@@ -116,7 +115,19 @@ def qualified_business_deduction(taxable_income, schedule_1, filing_status="sing
 
     return deduction
 
+# https://www.irs.gov/pub/irs-pdf/p501.pdf
+def compute_standard_deduction(f1040_data=data, filing_status="single"):
+    elderly_disabled_fields = ["senior_citizen_y", "blind_y"]
+    if "married" in filing_status or "widow" in filing_status:
+        elderly_disabled_fields.extend(["spouse_senior_citizen_y", "spouse_blind_y"])
     
+    n = sum(map(lambda x:f1040_data[x] if x in f1040_data else False, elderly_disabled_fields))
+
+    deduction = constants.get_value("STANDARD_DEDUCTION", filing_status) +\
+    n * constants.get_value("STANDARD_DEDUCTION+", filing_status)
+
+    return deduction
+
 def build_data(short_circuit = ''):
 
     data_dict = {}
@@ -240,7 +251,8 @@ def build_data(short_circuit = ''):
     itemized_deduction = utils.dollars_cents_to_float(schedule_a['total_itemized_dollars'],
                                                       schedule_a['total_itemized_cents'])
 
-    standard_deduction = constants.get_value("STANDARD_DEDUCTION", filing_status)
+    standard_deduction = compute_standard_deduction(data_dict, filing_status)
+
     deduction = max(itemized_deduction, standard_deduction)
     utils.add_keyed_float(deduction, 'deductions', data_dict)
     

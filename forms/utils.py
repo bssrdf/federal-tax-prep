@@ -26,6 +26,7 @@ import pdfrw
 import reportlab.pdfgen.canvas
 
 from . import constants
+from . import configs
 
 ROUND_TO_DOLLARS = True
 
@@ -70,8 +71,8 @@ Read in supporting files - data.json and keyfiles for forms.
 '''
 def parse_values():
     data_fname = 'sample_data.json'
-    if os.path.isfile('data.json'):
-        data_fname = 'data.json'
+    if os.path.isfile(configs.get_value("data_file")):
+        data_fname = configs.get_value("data_file")
 
     with open(data_fname) as fd:
         return json.load(fd)
@@ -156,7 +157,7 @@ def get_overlay(basename, data_dict, keyfile):
                 extras = data_dict['_extra_annots'][i + 1]
                 for each in extras:
                     
-                    pdf.setFont('Courier', each['size'])
+                    pdf.setFont(configs.get_value("font"), each['size'])
 
                     pdf.drawString(each['x'],
                                    each['y'],
@@ -220,7 +221,7 @@ def get_overlay(basename, data_dict, keyfile):
                             if '_rollover_flag' in data_dict:
                                 left = 420
                                 bottom = 712
-                                pdf.setFont('Courier', 8)
+                                pdf.setFont(configs.get_value("font"), 8)
                                 pdf.drawString(x = left, y = bottom, text = 'Rollover')
 
                         # print readable, value, data_dict[readable]
@@ -230,7 +231,7 @@ def get_overlay(basename, data_dict, keyfile):
                         bottom = float(str(min(rect[1], rect[3]))) + get_pad(rect[1], rect[3]) + 2
                         #print readable, rect, left, bottom
                         
-                        pdf.setFont('Courier', 12)
+                        pdf.setFont(configs.get_value("font"), 12)
 
                         pdf.drawString(x = left, y = bottom, text = value)
         pdf.showPage()

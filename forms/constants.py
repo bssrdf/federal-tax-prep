@@ -4,9 +4,20 @@ constants["STANDARD_DEDUCTION"] = {
 	"2018": {
 		"single":            12000,
 		"married_joint":     24000,
-		"widow":             24000,
+		"widower":           24000,
 		"married_separate":  12000,
 		"head_of_household": 18000
+	}
+}
+
+# for senior citizens or blind
+constants["STANDARD_DEDUCTION+"] =  {
+	"2018": {
+		"single":            1600,
+		"married_joint":     1300,
+		"widower":           1300,
+		"married_separate":  1300,
+		"head_of_household": 1600
 	}
 }
 

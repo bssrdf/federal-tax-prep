@@ -1,0 +1,4 @@
+{
+	"font": { "value": "Courier" } ,
+	"data_file": { "value": "data.json", "_comment": "path to finance data file - do not commit" }
+}
