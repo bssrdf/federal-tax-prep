@@ -26,7 +26,8 @@ import forms.cez_1040
 import forms.sep_ira
 import forms.f_8606
 import forms.s_1040v
-import forms.tax_worksheet
+import forms.worksheet__tax
+import forms.worksheet__child_credit
 import forms.constants
 import forms.utils
 
@@ -60,7 +61,7 @@ def fill_forms():
     output_pdfs.append(output_file)
 
     # Supporting forms/schedules/worksheets
-    additional_forms_to_attach = [forms.s1_1040, forms.s3_1040, forms.s4_1040, forms.s5_1040, forms.tax_worksheet, forms.a_1040, forms.b_1040, forms.cez_1040, forms.se_1040]
+    additional_forms_to_attach = [forms.s1_1040, forms.s3_1040, forms.s4_1040, forms.s5_1040, forms.worksheet__tax, forms.a_1040, forms.b_1040, forms.cez_1040, forms.se_1040]
     if '1099_r' in data:
         additional_forms_to_attach.extend([forms.f_8606, forms.sep_ira])
 

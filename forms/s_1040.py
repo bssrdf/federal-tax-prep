@@ -72,7 +72,8 @@ from . import s3_1040
 from . import s4_1040
 from . import s5_1040
 from . import f_8606
-from . import tax_worksheet
+from . import worksheet__tax
+from . import worksheet__child_credit
 from . import constants
 
 data = utils.parse_values()
@@ -271,18 +272,42 @@ def build_data(short_circuit = ''):
     if short_circuit == 'Tax Worksheet':
         return data_dict
 
-    worksheet = tax_worksheet.build_data()
+    worksheet = worksheet__tax.build_data()
     tax_due = worksheet['final_tax_on_income_unrounded']
     data_dict['tax_amount'] = str(int(round(tax_due, 0))) + ' '
 
     utils.add_keyed_float(tax_due, 'line_11', data_dict)
 
+    # Child Credit relies on Line 11
+    if short_circuit == 'Child Credit':
+        data_dict["dependents"] = data["dependents"]
+        return data_dict
+
     data_dict['schedule_3_added_y'] = True
     utils.add_keyed_float(schedule_3['_total_credits'],
                           'schedule_3',
                           data_dict)
+    utils.add_keyed_float(schedule_3['_total_credits'],
+                          'nonrefundable_credits',
+                          data_dict)
 
-    line_13 = tax_due - schedule_3['_total_credits']
+    if "dependents" in data:
+        dependent_credit_data = worksheet__child_credit.build_data()
+        data_dict["dependent_tax_credit"] = str(int(round(dependent_credit_data["_total_credits"]))) + ' '
+        for n, dependent in enumerate(dependent_credit_data["dependents"]):
+            if dependent["child_credit"]:
+                data_dict["dependent_%s_tax_credit_y" % (n+1)] = True
+            elif dependent["other_credit"]:
+                data_dict["dependent_%s_credit_others_n" % (n+1)] = True
+        utils.add_keyed_float(dependent_credit_data["_total_credits"],
+                             "dependent_tax_credit",
+                             data_dict)
+        utils.add_keyed_float(schedule_3['_total_credits'] + dependent_credit_data["_total_credits"],
+                          'nonrefundable_credits',
+                          data_dict)
+
+    line_13 = tax_due - utils.dollars_cents_to_float(data_dict['nonrefundable_credits_dollars'],
+                                                    data_dict['nonrefundable_credits_cents'])
     line_13 = max(line_13, 0)
 
     utils.add_keyed_float(line_13, 'line_13', data_dict)
