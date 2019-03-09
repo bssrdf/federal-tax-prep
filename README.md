@@ -1,6 +1,7 @@
 ## PyTaxPrep
 
 A set of Python scripts to fill in common tax forms and schedules.
+
 Modified from: https://github.com/pyTaxPrep/taxes-2018 to support more tax situations.
 
 ### Features added
@@ -14,8 +15,6 @@ Modified from: https://github.com/pyTaxPrep/taxes-2018 to support more tax situa
 + Sensitive data files added to `.gitignore`
 
 + Changed sample data as new features are added
-
-
 
 ### Supported Forms
 
@@ -83,7 +82,6 @@ The filer is _not_:
 
 ### Adding Forms
 
-    The main steps in adding a form are:
       - Add the original form to templates.
       - Add a new Python file to the form in forms. Like the
         other files, it should have `fill_in_form` and `build_data`
