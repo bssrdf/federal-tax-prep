@@ -89,7 +89,7 @@ def parse_keyfile(kf):
 
     rv = {}
 
-    with open(os.path.join('keyfiles', kf)) as fd:
+    with open(os.path.join('keyfiles/%s' % constants.TAX_YEAR, kf)) as fd:
         lines = fd.readlines()
         
         lines = [ x.strip() for x in lines ]
@@ -127,7 +127,7 @@ def get_overlay(basename, data_dict, keyfile):
     Create an overlay layer containing the text we want,
     where we want it.
     '''
-    input_pdf_path = os.path.join('templates', basename)
+    input_pdf_path = os.path.join('templates/%s' % constants.TAX_YEAR, basename)
     output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
@@ -283,7 +283,7 @@ def merge(overlay, basename):
     Merge the overlay with the original form, and return the result.
     '''
 
-    input_pdf_path = os.path.join('templates', basename)
+    input_pdf_path = os.path.join('templates/%s' % constants.TAX_YEAR, basename)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
     overlay_pdf = pdfrw.PdfReader(overlay)
@@ -304,7 +304,6 @@ def write_fillable_pdf(basename, data_dict, keyfile):
     form = merge(canvas, basename)
     # Write out the result
     output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
-    print(output_pdf_path)
     with open(output_pdf_path, 'wb') as f:
         f.write(form.read())
     # Circle back and handle grouped buttons
