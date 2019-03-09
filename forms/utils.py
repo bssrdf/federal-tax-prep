@@ -312,36 +312,6 @@ def write_fillable_pdf(basename, data_dict, keyfile):
 
     return output_pdf_path
 
-
-def dump_fields(fp):
-    '''
-    Helper function to print out different fields in a PDF.
-
-    Useful for generating keyfiles, debugging, etc.
-    '''
-
-    template_pdf = pdfrw.PdfReader(fp)
-    annotations = template_pdf.pages[0][ANNOT_KEY]
-    
-    for page in template_pdf.pages:
-        annotations = page[ANNOT_KEY]
-        if annotations is None:
-            continue
-        for annotation in annotations:
-            if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
-                if annotation[ANNOT_FIELD_KEY]:
-                    key = annotation[ANNOT_FIELD_KEY][1:-1]
-                    type = annotation[ANNOT_FIELD_TYPE]
-                    print (key, type)
-                else:
-                    print ('NOT ANNOT FIELD KEY')
-                    if annotation['/AS']:
-                        print ('Button', annotation['/AP']['/D'].keys(), annotation[PARENT_KEY][ANNOT_FIELD_KEY])
-                    else:
-                        print ('Text: ', annotation[PARENT_KEY][ANNOT_FIELD_KEY])
-                        print (annotation[PARENT_KEY][ANNOT_VAL_KEY])
-
-
 def get_tax_bracket(filing_status="single", year=constants.TAX_YEAR):
     tax_brackets = json.load(open('tables/federal_brackets.json'))[year]
     filing_status = filing_status.lower()
@@ -419,8 +389,3 @@ def add_fields(d, fields):
         if dk and ck in d:
             total += dollars_cents_to_float(d[dk], d[ck])
     return total
-
-
-
-if __name__ == '__main__':
-    dump_fields(sys.argv[1])

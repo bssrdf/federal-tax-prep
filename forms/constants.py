@@ -21,6 +21,22 @@ constants["STANDARD_DEDUCTION+"] =  {
 	}
 }
 
+constants["DEPENDENTS_CREDIT_INCOME_THRESHOLD"] = {
+	"2018": {
+		"single":            200000,
+		"married_joint":     400000,
+		"widower":           200000,
+		"married_separate":  200000,
+		"head_of_household": 200000
+	}
+}
+
+constants["DEPENDENTS_CREDIT_AMT"] = {
+	"2018": {
+		"all": { "child": 2000, "other": 500 }
+	}
+}
+
 constants["QBI_THRESHOLD"] = {
 	"2018": {
 		"all": 157500

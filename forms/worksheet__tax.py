@@ -140,8 +140,8 @@ def build_data():
 
 def fill_in_form():
     data_dict = build_data()
-    basename = 'tax_worksheet.pdf'
-    return utils.write_fillable_pdf(basename, data_dict, 'tax_worksheet.keys')
+    basename = 'worksheet__tax.pdf'
+    return utils.write_fillable_pdf(basename, data_dict, 'worksheet__tax.keys')
 
 
 if __name__ == '__main__':
