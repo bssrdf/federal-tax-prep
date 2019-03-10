@@ -90,7 +90,7 @@ def build_long_schedule_se(data_dict, se_income):
     utils.add_keyed_float(line_3, 'line_3', data_dict)
 
     # Taxable SE income
-    line_4 = line_3 * (1 - combined_FICA_rate/2) if line_3 > 0 else line_3
+    line_4 = line_3 * (1 - combined_FICA_rate*0.5) if line_3 > 0 else line_3
     utils.add_keyed_float(line_4, 'line_4a', data_dict)
     utils.add_keyed_float(line_4, 'line_4c', data_dict)
 

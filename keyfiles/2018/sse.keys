@@ -39,7 +39,7 @@ net_profit_dollars                 FEFF00660032005F0037005B0030005D /Tx
 net_profit_cents                   FEFF00660032005F0038005B0030005D /Tx
 line_3_dollars                     FEFF00660032005F0039005B0030005D /Tx
 line_3_cents                       FEFF00660032005F00310030005B0030005D /Tx
-line_4a_dollar s                   FEFF00660032005F00310031005B0030005D /Tx
+line_4a_dollars                    FEFF00660032005F00310031005B0030005D /Tx
 line_4a_cents                      FEFF00660032005F00310032005B0030005D /Tx
 line_4b_dollars                    FEFF00660032005F00310033005B0030005D /Tx
 line_4b_cents                      FEFF00660032005F00310034005B0030005D /Tx
