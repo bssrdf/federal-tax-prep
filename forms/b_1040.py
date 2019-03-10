@@ -31,36 +31,36 @@ Currently, the following lines are filled:
 
 from . import utils
 
-data = utils.parse_values()
-
 ###################################
 
 def build_data():
 
+    info = utils.parse_values()
+    
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn']
-        }
+        'name' : info['name'],
+        'ssn'  : info['ssn']
+    }
 
     interests = ['interest_%s' % x for x in range(1, 15)]
     dividends = ['dividend_%s' % x for x in range(1, 17)]
 
-    for i, d in enumerate(data['1099_int']):
+    for i, d in enumerate(info['1099_int']):
         utils.add_keyed_float(d['interest_income'], interests[i], data_dict)
         data_dict[interests[i] + '_name'] = d['institution']
 
-    for i, d in enumerate(data['1099_div']):
+    for i, d in enumerate(info['1099_div']):
         utils.add_keyed_float(d['total_ordinary'], dividends[i], data_dict)
         data_dict[dividends[i] + '_name'] = d['institution']
 
-    total_interest = sum([x['interest_income'] for x in data['1099_int']])
+    total_interest = sum([x['interest_income'] for x in info['1099_int']])
     utils.add_keyed_float(total_interest, 'interest_sum', data_dict)
 
     utils.add_keyed_float(0, 'interest_ex', data_dict)
 
     utils.add_keyed_float(total_interest, 'interest_total', data_dict)
 
-    total_dividend = sum([x['total_ordinary'] for x in data['1099_div']])
+    total_dividend = sum([x['total_ordinary'] for x in info['1099_div']])
     utils.add_keyed_float(total_dividend, 'dividend_total', data_dict)
 
     data_dict['foreign_acct_n'] = True

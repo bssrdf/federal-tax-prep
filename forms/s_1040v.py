@@ -23,36 +23,30 @@ Relies on a full Schedule 1040.
 from . import utils
 from . import s_1040
 
-data = utils.parse_values()
-
 ###################################
 
-def build_data():
+def build_data(info):
 
     form_1040 = s_1040.build_data()
 
     data_dict = {
-        'ssn'              : data['ssn'],
-        'first_and_initial' : data['name_first'] + ' ' + data['name_middle_i'],
-        'last'              : data['name_last'],
-        'address'           : data['address'],
-        'city_state_zip'    : (data['address_city'] 
-                               + ', ' + data['address_state'] 
-                               + ' ' + data['address_zip']),
-        }
+        'ssn'               : info['ssn'],
+        'first_and_initial' : info['name_first'] + ' ' + info['name_middle_i'],
+        'last'              : info['name_last'],
+        'address'           : info['address'],
+        'city_state_zip'    : '%s, %s %s' % (info['address_city'], info['address_state'], info['address_zip'])
+    }
     
-    if 'apartment' in data:
-        data_dict['apartment'] = data['apartment']
+    if 'apartment' in info:
+        data_dict['apartment'] = info['apartment']
 
     if '_owed' in form_1040 and form_1040['_owed'] > 0:
-        utils.add_keyed_float(form_1040['_owed'],
-                          'pay',
-                          data_dict)
+        utils.add_keyed_float(form_1040['_owed'], 'pay', data_dict)
 
     return data_dict
 
 def fill_in_form():
-    data_dict = build_data()
+    data_dict = build_data(utils.parse_values())
     basename = 'f1040v.pdf'
     return utils.write_fillable_pdf(basename, data_dict, 'f1040v.keys')
 

@@ -32,23 +32,23 @@ from . import s3_1040
 from . import s_1040
 from . import f_8863_iii
 
-data = utils.parse_values()
-
 ###################################
 
-def build_data(sdata):
+def build_data(s_info):
+    info = utils.parse_values()
+
     data_dict = {
-        'name': data['name']
+        'name': info['name']
     }
 
-    _constants = constants.get_value("EDUCATION_CREDIT", filing_status=data["filing_status"])
+    _constants = constants.get_value("EDUCATION_CREDIT", filing_status=info["filing_status"])
 
-    f8863_iii_data = [f_8863_iii.build_data(student) for student in sdata]
+    f8863_iii_data = [f_8863_iii.build_data(student) for student in s_info]
     f1040_data = s_1040.build_data(short_circuit="tax_due")
     accrued_credits, _ = s3_1040.build_data(short_circuit="child_care")
 
     # Populate filer's SSN
-    for (i, s) in enumerate(data['ssn'].split('-')):
+    for (i, s) in enumerate(info['ssn'].split('-')):
         data_dict['ssn_%s' % i] = s
 
     agi = utils.dollars_cents_to_float(f1040_data["adjusted_gross_income_dollars"], f1040_data["adjusted_gross_income_cents"])
@@ -145,7 +145,7 @@ def build_data(sdata):
     return data_dict
 
 
-def fill_in_form(sdata):
-    data_dict = build_data(sdata)
+def fill_in_form(s_info):
+    data_dict = build_data(s_info)
     data_dict['_width'] = 9
     return utils.write_fillable_pdf("f8863_i.pdf", data_dict, 'f8863_i.keys')

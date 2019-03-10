@@ -40,26 +40,28 @@ Currently, the following lines are filled:
 '''
 
 from . import utils
-from . import s_1040
+from . import configs
 from . import constants
 
-data = utils.parse_values()
+from . import s_1040
 
 ###################################
 
 def build_data():
 
+    info = utils.parse_values()
+
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn']
+        'name' : info['name'],
+        'ssn'  : info['ssn']
     }
 
-    filing_status = data['filing_status'] if 'filing_status' in data else "single"
+    filing_status = info['filing_status'] if 'filing_status' in info else "single"
 
     form_1040 = s_1040.build_data(short_circuit='AGI')
 
     # Medical expenses
-    medical_expenses = data['medical_expenses'] if 'medical_expenses' in data else 0
+    medical_expenses = info['medical_expenses'] if 'medical_expenses' in info else 0
     utils.add_keyed_float(medical_expenses, 'medical_exp', data_dict)
         
     agi = utils.dollars_cents_to_float(form_1040['adjusted_gross_income_dollars'],
@@ -77,11 +79,11 @@ def build_data():
     #   2) Estimated payments for this year
     #   3) Withheld taxes on w2
     state_local = 0.0
-    if 'state_due_last_year' in data:
-        state_local += data['state_due_last_year']
-    if 'estimated_state' in data:
-        state_local += sum([x['amount'] for x in data['estimated_state'] if x['date'].startswith(constants.TAX_YEAR)])
-    state_local += sum([x['state_withheld'] for x in data['w2']])
+    if 'state_due_last_year' in info:
+        state_local += info['state_due_last_year']
+    if 'estimated_state' in info:
+        state_local += sum([x['amount'] for x in info['estimated_state'] if x['date'].startswith(configs.get_value("tax_year"))])
+    state_local += sum([x['state_withheld'] for x in info['w2']])
 
     utils.add_keyed_float(state_local, 'income_sales_tax', data_dict)
 
@@ -110,12 +112,12 @@ def build_data():
     utils.add_keyed_float(total_interest, 'total_interest', data_dict)
 
     # Charity donations
-    if 'donations_cash' in data:
-        charity_monies = sum([x['amount'] for x in data['donations_cash']])
+    if 'donations_cash' in info:
+        charity_monies = sum([x['amount'] for x in info['donations_cash']])
         utils.add_keyed_float(charity_monies, 'charity_monies', data_dict)
 
-    if 'donations_noncash' in data:
-        charity_others = sum([x['amount'] for x in data['donations_noncash']])
+    if 'donations_noncash' in info:
+        charity_others = sum([x['amount'] for x in info['donations_noncash']])
         utils.add_keyed_float(charity_others, 'charity_others', data_dict)
         
     charity_total = utils.add_fields(data_dict, ['charity_monies',

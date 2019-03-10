@@ -26,19 +26,19 @@ from . import utils
 from . import se_1040
 from . import cez_1040
 
-data = utils.parse_values()
-
 ###################################
 
 def build_data():
+
+    info =  utils.parse_values()
 
     schedule_se = se_1040.build_data()
     schedule_c = cez_1040.build_data()
 
     data_dict = {}
 
-    data_dict['percentage']        = '%.2f' % (data['sep_percentage'])
-    data_dict['factor']            = '%.2f' % (1 + data['sep_percentage'])
+    data_dict['percentage']        = '%.2f' % (info['sep_percentage'])
+    data_dict['factor']            = '%.2f' % (1 + info['sep_percentage'])
     
     profits = utils.dollars_cents_to_float(schedule_c['net_profit_dollars'],
                                            schedule_c['net_profit_cents'])
@@ -48,7 +48,7 @@ def build_data():
     adj_earned = adj_profits / float(data_dict['factor'])
     max_earned = 280000.0
     final_earned = min(adj_earned, max_earned)
-    prelim_contrib_amt = data['sep_percentage'] * final_earned
+    prelim_contrib_amt = info['sep_percentage'] * final_earned
     max_contrib_amt = 56000.0
     final_contrib_amt = min(max_contrib_amt, prelim_contrib_amt)
 

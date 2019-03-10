@@ -22,8 +22,6 @@ from . import s_1040
 from . import s3_1040
 import math
 
-data = utils.parse_values()
-
 ###################################
 
 def qualifies_child(dependent):
@@ -34,6 +32,8 @@ def qualifies_other(dependent):
 
 
 def build_data():
+
+    info = utils.parse_values()
 
     data_dict = {}
 
@@ -64,7 +64,7 @@ def build_data():
 
     line_6 = line_5 + line_4
 
-    filing_status = data["filing_status"] if "filing_status" in data else "single"
+    filing_status = info["filing_status"] if "filing_status" in info else "single"
     line_7 = constants.get_value("DEPENDENTS_CREDIT_INCOME_THRESHOLD", filing_status)
 
     line_8, line_9 = '', 0

@@ -28,23 +28,23 @@ In addition, you can specify any foreign tax paid by including
 from . import utils
 from . import f_8863_i
 
-data = utils.parse_values()
-
 ###################################
 
 def build_data(short_circuit=''):
 
+    info = utils.parse_values()
+
     data_dict = {
-      'name' : data['name'],
-      'ssn'  : data['ssn']
+      'name' : info['name'],
+      'ssn'  : info['ssn']
     }
 
     accrued_credits = 0.0
 
     # Foreign tax credit
-    if '1099_div' in data:
+    if '1099_div' in info:
         foreign_tax_credit = 0.0
-        foreign_tax_credit += sum([asset['foreign_tax'] if 'foreign_tax' in asset else 0 for asset in data['1099_div']])
+        foreign_tax_credit += sum([asset['foreign_tax'] if 'foreign_tax' in asset else 0 for asset in info['1099_div']])
         utils.add_keyed_float(foreign_tax_credit, 'foreign_tax_credit', data_dict)
         accrued_credits += foreign_tax_credit
 
@@ -55,8 +55,8 @@ def build_data(short_circuit=''):
       return accrued_credits, data_dict
 
     # Education credits
-    if utils.has_education(data):
-      education_credits = f_8863_i.build_data(data["postsecondary_education"])
+    if utils.has_education(info):
+      education_credits = f_8863_i.build_data(info["postsecondary_education"])
       if "_nonrefundable_total" in education_credits:
         utils.add_keyed_float(education_credits["_nonrefundable_total"], 'education', data_dict)
         accrued_credits += education_credits["_nonrefundable_total"]

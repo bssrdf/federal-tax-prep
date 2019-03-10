@@ -46,24 +46,22 @@ It makes the following assumptions:
 
 from . import utils
 
-data = utils.parse_values()
-
-def calculate_expenses():
+def calculate_expenses(info):
 
     d = {}
 
-    if 'meals' in data:
-        d['wk_meals_dollars'], d['wk_meals_cents'] = utils.float_to_dollars_cents(data['meals'])
+    if 'meals' in info:
+        d['wk_meals_dollars'], d['wk_meals_cents'] = utils.float_to_dollars_cents(info['meals'])
  
     prefixes = ['wk_b', 'wk_c', 'wk_d', 'wk_e', 'wk_f']
 
-    expenses = data['business_exp'][:] if 'business_exp' in data else []
+    expenses = info['business_exp'][:] if 'business_exp' in info else []
 
-    if 'vehicle' in data:
+    if 'vehicle' in info:
         expenses.append(
             {'description' : 'Vehicle Mileage (%d miles @ $0.545 per mile)' % 
-             (data['vehicle']['mileage']),
-             'amount'      : data['vehicle']['mileage'] * data['vehicle']['mileage_rate']})
+             (info['vehicle']['mileage']),
+             'amount'      : info['vehicle']['mileage'] * info['vehicle']['mileage_rate']})
 
     for i, ex in enumerate(expenses):
         pfx = prefixes[i]
@@ -74,7 +72,7 @@ def calculate_expenses():
     
     total_cost = sum([x['amount'] for x in expenses])
     
-    if 'meals' in data:
+    if 'meals' in info:
         total_cost +=  d['wk_meals_dollars'] + d['wk_meals_cents'] * 0.01
             
     d['wk_total_dollars'], d['wk_total_cents'] = utils.float_to_dollars_cents(total_cost)
@@ -82,17 +80,19 @@ def calculate_expenses():
     return d
 
 def build_data():
-    expenses = calculate_expenses()
+
+    info = utils.parse_values()
+    expenses = calculate_expenses(info)
 
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn'],
-        'profession'       : data['profession'],
-        'code'             : data['profession_code'],
-        'business_addr_1'  : data['address'],
-        'business_addr_2'  : '%s, %s %s' % (data['address_city'],
-                                            data['address_state'],
-                                            data['address_zip']),
+        'name'             : info['name'],
+        'ssn'              : info['ssn'],
+        'profession'       : info['profession'],
+        'code'             : info['profession_code'],
+        'business_addr_1'  : info['address'],
+        'business_addr_2'  : '%s, %s %s' % (info['address_city'],
+                                            info['address_state'],
+                                            info['address_zip']),
         'need_1099_n'      : True,
         'receipts_dollars' : 0,
         'receipts_cents'   : 0,
@@ -100,12 +100,12 @@ def build_data():
         'expenses_cents'   : expenses['wk_total_cents'],
     }
 
-    if '1099_misc' in data:
-        data_dict['receipts_dollars'] = int(sum([x['other_income'] for x in data['1099_misc']]))
+    if '1099_misc' in info:
+        data_dict['receipts_dollars'] = int(sum([x['other_income'] for x in info['1099_misc']]))
 
-    if 'vehicle' in data:
-        data_dict['vehicle_date'] = data['vehicle']['dates']
-        data_dict['vehicle_miles_bus'] = data['vehicle']['mileage']
+    if 'vehicle' in info:
+        data_dict['vehicle_date'] = info['vehicle']['dates']
+        data_dict['vehicle_miles_bus'] = info['vehicle']['mileage']
         data_dict['vehicle_personal_y'] = True,
         data_dict['vehicle_another_n'] = True,
         data_dict['vehicle_evidence_y'] = True,

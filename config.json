@@ -1,4 +1,5 @@
 {
-	"font": { "value": "Courier" } ,
-	"data_file": { "value": "data.json", "_comment": "path to finance data file - do not commit" }
+	"font":      { "value": "Courier" } ,
+	"data_file": { "value": "data.json", "_comment": "path to finance data file - do not commit" },
+	"tax_year":  { "value": "2018" }
 }

@@ -1,4 +1,6 @@
-constants = {}
+from . import configs
+
+constants = dict()
 
 constants["STANDARD_DEDUCTION"] = { 
 	"2018": {
@@ -36,7 +38,7 @@ constants["SE_TAXES"] = {
 	}
 }
 
-# as percentage of adjusted gross incomes
+# as percentage of adjusted gross income
 constants["NONDEDUCTIBLE_MEDICAL_EXPENSE_RATE"] = {
 	"2018": {
 		"all": 0.075 
@@ -117,9 +119,8 @@ constants["MAX_DEDUCTIBLE_STATE_TAX"] = {
 	}
 }
 
-TAX_YEAR = "2018"
-
-def get_value(key, filing_status="single", tax_year=TAX_YEAR):
+def get_value(key, filing_status="single"):
+	tax_year = configs.get_value("tax_year")
 	table = constants[key][tax_year]
 
 	for key in table.keys():

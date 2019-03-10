@@ -26,21 +26,21 @@ from . import constants
 
 from . import cez_1040
 
-data = utils.parse_values()
-
 ###################################
 
 def build_data():
 
+    info = utils.parse_values()
+
     data_dict = {
-        'ez_name'             : data['name'],
-        'ez_ssn'              : data['ssn'],
-        'name'             : data['name'],
-        'ssn'              : data['ssn']
-        }
+        'ez_name' : info['name'],
+        'ez_ssn'  : info['ssn'],
+        'name'    : info['name'],
+        'ssn'     : info['ssn']
+    }
 
 
-    w2_income = sum([x['ss_wages'] for x in data['w2']])
+    w2_income = sum([x['ss_wages'] for x in info['w2']])
 
     schedule_c = cez_1040.build_data()
 
@@ -75,7 +75,7 @@ def build_short_schedule_se(data_dict, se_income):
     utils.add_keyed_float(line_6, 'ez_line_6', data_dict)
 
     utils.add_keyed_float(line_6, '_se_deduction', data_dict)
-    utils.add_keyed_float(line_5, '_se_tax',data_dict)
+    utils.add_keyed_float(line_5, '_se_tax', data_dict)
 
 
 def build_long_schedule_se(data_dict, se_income):
@@ -102,7 +102,7 @@ def build_long_schedule_se(data_dict, se_income):
     line_6 = line_4
     utils.add_keyed_float(line_6, 'line_6', data_dict)
 
-    line_8a = sum(x['ss_wages'] for x in data['w2'])
+    line_8a = sum(x['ss_wages'] for x in info['w2'])
     utils.add_keyed_float(line_8a, 'total_ss_wages', data_dict)
 
     line_8d = line_8a

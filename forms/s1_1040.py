@@ -34,12 +34,11 @@ self-employment tax and SEP IRA contribution deductions.
 
 from . import utils
 from . import constants
+
 from . import cez_1040
 from . import se_1040
 from . import s_1040
 from . import worksheet__sep_ira
-
-data = utils.parse_values()
 
 ###################################
 
@@ -58,12 +57,13 @@ def compute_student_loan_deduction(interest_amt, agi, filing_status):
 
   return 0
 
-    
 def build_data(f1040_data=None):
 
     schedule_c, schedule_se, sep_ira = None, None, None
 
-    if utils.has_self_employment(data):
+    info = utils.parse_values()
+
+    if utils.has_self_employment(info):
       schedule_c  = cez_1040.build_data()
       schedule_se = se_1040.build_data()
       sep_ira = worksheet__sep_ira.build_data()
@@ -72,8 +72,8 @@ def build_data(f1040_data=None):
       f1040_data = s_1040.build_data(short_circuit="total_income")
     
     data_dict = {
-        'name' : data['name'],
-        'ssn'  : data['ssn'],
+        'name' : info['name'],
+        'ssn'  : info['ssn']
     }
 
     # === Additional Income === #
@@ -84,8 +84,8 @@ def build_data(f1040_data=None):
       data_dict['business_cents'] = schedule_c['net_profit_cents']
 
     # Capital gains
-    if '1099_div' in data:
-        total_capital_gain = sum([x['total_capital_gain'] if 'total_capital_gain' in x else 0 for x in data['1099_div']])
+    if '1099_div' in info:
+        total_capital_gain = sum([x['total_capital_gain'] if 'total_capital_gain' in x else 0 for x in info['1099_div']])
         utils.add_keyed_float(total_capital_gain,
                               'capital_gain',
                                data_dict)
@@ -106,12 +106,12 @@ def build_data(f1040_data=None):
     # === Adjustments to Income === #
 
     # Educator expenses
-    if 'educator_expenses' in data:
-      utils.add_keyed_float(data['educator_expenses'], 'educator', data_dict)
+    if 'educator_expenses' in info:
+      utils.add_keyed_float(info['educator_expenses'], 'educator', data_dict)
 
     # Health savings deduction
-    if 'health_savings_acct_deduction' in data:
-      utils.add_keyed_float(data['health_savings_acct_deduction'], 'hsa', data_dict)
+    if 'health_savings_acct_deduction' in info:
+      utils.add_keyed_float(info['health_savings_acct_deduction'], 'hsa', data_dict)
 
     # Self-employed deduction
     if schedule_se is not None:
@@ -124,15 +124,15 @@ def build_data(f1040_data=None):
           utils.float_to_dollars_cents(float(sep_ira['final_contrib_amt']))
 
     # Traditional IRA
-    if 'traditional_ira_deduction' in data:
-      utils.add_keyed_float(data['traditional_ira_deduction'], 'ira', data_dict)
+    if 'traditional_ira_deduction' in info:
+      utils.add_keyed_float(info['traditional_ira_deduction'], 'ira', data_dict)
 
     # Student loan deduction
-    if 'student_loan_interest' in data and f1040_data is not None:
+    if 'student_loan_interest' in info and f1040_data is not None:
       if "total_income_dollars" in f1040_data:
         temp_agi = utils.dollars_cents_to_float(f1040_data["total_income_dollars"],
                                                 f1040_data["total_income_cents"])
-        student_loan_deduction = compute_student_loan_deduction(data["student_loan_interest"], temp_agi, data["filing_status"])
+        student_loan_deduction = compute_student_loan_deduction(info["student_loan_interest"], temp_agi, info["filing_status"])
         utils.add_keyed_float(student_loan_deduction, 'loan_interest', data_dict)
 
     adjustments = ['educator', 'business_expenses',

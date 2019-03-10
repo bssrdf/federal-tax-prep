@@ -29,20 +29,20 @@ Currently, it'll fill in the line for estimated federal tax payments.
 
 from . import utils
 
-data = utils.parse_values()
-
 ###################################
     
 def build_data():
 
+    info = utils.parse_values()
+
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn'],
-        }
+        'name' : info['name'],
+        'ssn'  : info['ssn']
+    }
 
     # Set other payments / refundable credit lines here
-    if 'estimated_fed' in data:
-        estimated_federal = sum( [ x['amount'] for x in data['estimated_fed'] ] )
+    if 'estimated_fed' in info:
+        estimated_federal = sum([x['amount'] for x in info['estimated_fed']])
         utils.add_keyed_float(estimated_federal, 'estimated_tax', data_dict)
 
     # Sum other payments and refundable credits
@@ -51,9 +51,7 @@ def build_data():
                'fuel_credit',
                'credits']
 
-    utils.add_keyed_float(utils.add_fields(data_dict, credits),
-                          'total_credits',
-                          data_dict)
+    utils.add_keyed_float(utils.add_fields(data_dict, credits), 'total_credits', data_dict)
 
     return data_dict
 

@@ -22,6 +22,7 @@ import io
 import os
 import sys
 import json
+import copy
 import pdfrw
 import reportlab.pdfgen.canvas
 
@@ -69,13 +70,17 @@ def get_pad(x1, x2):
 '''
 Read in supporting files - data.json and keyfiles for forms.
 '''
+
 def parse_values():
     data_fname = 'sample_data.json'
     if os.path.isfile(configs.get_value("data_file")):
         data_fname = configs.get_value("data_file")
+    else:
+        print("=== Warning: {0} not found. Using {1} instead ===".format(configs.get_value("data_file"), data_fname))
 
     with open(data_fname) as fd:
-        return json.load(fd)
+        DATA_CACHE = json.load(fd)
+        return copy.deepcopy(DATA_CACHE)
 
 def parse_keyfile(kf):
     '''
@@ -90,7 +95,7 @@ def parse_keyfile(kf):
 
     rv = {}
 
-    with open(os.path.join('keyfiles/%s' % constants.TAX_YEAR, kf)) as fd:
+    with open(os.path.join('keyfiles/%s' % configs.get_value("tax_year"), kf)) as fd:
         lines = fd.readlines()
         
         lines = [x.strip() for x in lines]
@@ -128,8 +133,8 @@ def get_overlay(basename, data_dict, keyfile, output_name):
     Create an overlay layer containing the text we want,
     where we want it.
     '''
-    input_pdf_path = os.path.join('templates/%s' % constants.TAX_YEAR, basename)
-    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, output_name)
+    input_pdf_path = os.path.join('templates/%s' % configs.get_value("tax_year"), basename)
+    output_pdf_path = os.path.join(configs.get_value("out_dir"), output_name)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
     annotations = template_pdf.pages[0][ANNOT_KEY]
@@ -253,8 +258,8 @@ def do_buttons(basename, data_dict, keyfile):
     Handle that case here.
     '''
 
-    input_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
-    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
+    input_pdf_path = os.path.join(configs.get_value("out_dir"), basename)
+    output_pdf_path = os.path.join(configs.get_value("out_dir"), basename)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
     annotations = template_pdf.pages[0][ANNOT_KEY]
@@ -288,7 +293,7 @@ def merge(overlay, basename):
     Merge the overlay with the original form, and return the result.
     '''
 
-    input_pdf_path = os.path.join('templates/%s' % constants.TAX_YEAR, basename)
+    input_pdf_path = os.path.join('templates/%s' % configs.get_value("tax_year"), basename)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
     overlay_pdf = pdfrw.PdfReader(overlay)
@@ -310,7 +315,7 @@ def write_fillable_pdf(basename, data_dict, keyfile, output_name=None):
     # Merge it with the original PDF
     form = merge(canvas, basename)
     # Write out the result
-    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, output_name)
+    output_pdf_path = os.path.join(configs.get_value("out_dir"), output_name)
     with open(output_pdf_path, 'wb') as f:
         f.write(form.read())
     # Circle back and handle grouped buttons
@@ -335,9 +340,9 @@ def has_self_employment(data):
 def has_deductible_ira(data):
     return '1099_r' in data
 
-def get_tax_bracket(filing_status="single", year=constants.TAX_YEAR):
-    tax_brackets = json.load(open('tables/federal_brackets.json'))[year]
-    filing_status = filing_status.lower()
+def get_tax_bracket(filing_status="single"):
+    tax_year = configs.get_value("tax_year")
+    tax_brackets = json.load(open('tables/federal_brackets.json'))[tax_year]
     if filing_status not in tax_brackets:
         raise Error("Invalid filing status: %s" % filing_status)
 

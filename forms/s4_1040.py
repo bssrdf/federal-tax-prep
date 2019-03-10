@@ -31,21 +31,19 @@ Currently, it'll fill in the line for the self employment tax.
 from . import utils
 from . import se_1040
 
-data = utils.parse_values()
-
 ###################################
-
-
 
     
 def build_data():
 
+    info = utils.parse_values()
+
     schedule_se = se_1040.build_data()
 
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn'],
-        }
+        'name' : info['name'],
+        'ssn'  : info['ssn']
+    }
 
     # Set tax lines here
     data_dict['se_tax_dollars'], data_dict['se_tax_cents'] =\
@@ -58,9 +56,7 @@ def build_data():
              'additional_taxes',
              'net_tax_liability']
 
-    utils.add_keyed_float(utils.add_fields(data_dict, taxes),
-                          'total_other_taxes',
-                          data_dict )
+    utils.add_keyed_float(utils.add_fields(data_dict, taxes), 'total_other_taxes', data_dict)
 
     return data_dict
 

@@ -32,19 +32,19 @@ from . import constants
 from . import s_1040
 from . import s1_1040
 
-data = utils.parse_values()
-
 ###################################
 
 
 def build_data():
+
+    info = utils.parse_values()
 
     form_1040  = s_1040.build_data(short_circuit="taxable_income")
     schedule_1 = s1_1040.build_data()
 
     data_dict = {}
 
-    filing_status = data['filing_status'] if 'filing_status' in data else "single"
+    filing_status = info['filing_status'] if 'filing_status' in info else "single"
     capital_gains_tax_brackets = constants.get_value("CAPITAL_GAINS_BRACKETS", filing_status)
 
     line_1 = utils.dollars_cents_to_float(form_1040['taxable_income_dollars'],

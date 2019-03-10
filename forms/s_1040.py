@@ -77,16 +77,15 @@ from . import worksheet__capital_gains
 from . import worksheet__child_credit
 from . import constants
 
-data = utils.parse_values()
 
 ###################################
 
 # https://www.irs.gov/newsroom/tax-cuts-and-jobs-act-provision-11011-section-199a-qualified-business-income-deduction-faqs
-def qualified_business_deduction(taxable_income, schedule_1, filing_status="single"):
+def qualified_business_deduction(f1040_data, taxable_income, schedule_1, filing_status="single"):
     
-    if 'qbi_deduction' not in data:
+    if 'qbi_deduction' not in f1040_data:
         return 0
-    if data['qbi_deduction'] is not True:
+    if f1040_data['qbi_deduction'] is not True:
         return 0
 
     qbi_threshold = constants.get_value("QBI_THRESHOLD", filing_status)
@@ -116,7 +115,7 @@ def qualified_business_deduction(taxable_income, schedule_1, filing_status="sing
     return deduction
 
 # https://www.irs.gov/pub/irs-pdf/p501.pdf
-def compute_standard_deduction(f1040_data=data, filing_status="single"):
+def compute_standard_deduction(f1040_data, filing_status="single"):
     elderly_disabled_fields = ["senior_citizen_y", "blind_y"]
     if "married" in filing_status or "widow" in filing_status:
         elderly_disabled_fields.extend(["spouse_senior_citizen_y", "spouse_blind_y"])
@@ -128,8 +127,10 @@ def compute_standard_deduction(f1040_data=data, filing_status="single"):
 
     return deduction
 
-def build_data(short_circuit = ''):
+def build_data(short_circuit=None):
 
+    data = utils.parse_values()
+    
     data_dict = {}
 
     schedule_b  = b_1040.build_data()
@@ -256,7 +257,7 @@ def build_data(short_circuit = ''):
     itemized_deduction = utils.dollars_cents_to_float(schedule_a['total_itemized_dollars'],
                                                       schedule_a['total_itemized_cents'])
 
-    standard_deduction = compute_standard_deduction(data_dict, filing_status)
+    standard_deduction = compute_standard_deduction(f1040_data=data_dict, filing_status=filing_status)
 
     deduction_claim = max(itemized_deduction, standard_deduction)
     utils.add_keyed_float(deduction_claim, 'deductions', data_dict)
@@ -266,7 +267,7 @@ def build_data(short_circuit = ''):
     # This is weird ... the IRS says the QBI deduction calculation
     # involves taxable income, but taxable income depends on the
     # QBI deduction. 
-    qbi_deduction = qualified_business_deduction(taxable_income, schedule_1, filing_status)
+    qbi_deduction = qualified_business_deduction(data_dict, taxable_income, schedule_1, filing_status)
     taxable_income -= qbi_deduction
     taxable_income = max(taxable_income, 0)
 
@@ -358,6 +359,7 @@ def build_data(short_circuit = ''):
     return data_dict
 
 def fill_in_form():
+    data = utils.parse_values()
     data_dict = build_data()
     data_dict['_width'] = 9
     data_dict['_signature_page'] = 1

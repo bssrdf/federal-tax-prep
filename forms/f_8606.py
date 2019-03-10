@@ -34,30 +34,30 @@ You also need standard personal information fields (name, ssn, address).
 
 from . import utils
 
-data = utils.parse_values()
-
 ###################################
 
 def build_data():
 
     data_dict = {}
 
-    if '1099_r' not in data:
+    info = utils.parse_values()
+
+    if not utils.has_deductible_ira(info):
         raise Exception("We need a 1099-R for this form!")
 
-    conv = [ x for x in data['1099_r'] if x['type'] == 'backdoor_conversion' ]
+    conv = [x for x in info['1099_r'] if x['type'] == 'backdoor_conversion']
     if len(conv) != 1:
         raise Exception("Need exactly one backdoor conversion type!")
 
     conv = conv[0]
 
-    data_dict['name'] = data['name']
-    data_dict['ssn'] = data['ssn']
-    data_dict['home_address'] = data['address']
-    data_dict['apt_no'] = data['address_apt']
-    data_dict['city_state_zip'] = '%s, %s %s' % (data['address_city'],
-                                                 data['address_state'],
-                                                 data['address_zip'])
+    data_dict['name'] = info['name']
+    data_dict['ssn'] = info['ssn']
+    data_dict['home_address'] = info['address']
+    data_dict['apt_no'] = info['address_apt']
+    data_dict['city_state_zip'] = '%s, %s %s' % (info['address_city'],
+                                                 info['address_state'],
+                                                 info['address_zip'])
 
     traditional_contribution = conv['contribution']
     utils.add_keyed_float(traditional_contribution,
