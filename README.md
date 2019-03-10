@@ -9,6 +9,7 @@ Modified from: https://github.com/pyTaxPrep/taxes-2018 to support more tax situa
 + Support for non-single filing statuses
 + Additional adjustments to income (student loan interest, health savings, traditional IRA deductions)
 + Claim credits for children/other dependents
++ Claim credits for post-secondary education expenses
 + [In progress] Extract U.S. tax code "magic numbers" into `forms/constants.py` file (so they are easy to modify year-to-year)
 + Use official marginal tax brackets to compute tax amount, instead of hard-coded tables
 + Modularized for multiple tax years
@@ -24,6 +25,7 @@ The filer has moderately-complex taxes due to:
   - A sole proprietorship (Schedule C-EZ and SE). 
   - Money in bank accounts (1099-INT) and investment accounts (1099-DIV).
   - Children or other dependents.
+  - Post-secondary education expenses.
   - Estimated tax payments.
   - Contributions to a SEP IRA, rollovers from a SEP IRA, and/or a backdoor Roth conversion.
   - Itemized deductions (medical expenses and donations).
@@ -32,7 +34,8 @@ With that in mind, the following forms have some amount of support:
   - Form 1040 (Schedules 1, 4, 5, A, B, CEZ, and SE)
   - SEP IRA Contribution Worksheet
   - Child and Other Dependents Credit Worksheet
-  - Form 8606
+  - Form 8606 (Non-deductible IRAs)
+  - Form 8863 (Education Credits)
 
 The filer is _not_:
   - A homeowner.
