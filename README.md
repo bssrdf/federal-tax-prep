@@ -28,17 +28,18 @@ The filer has moderately-complex taxes due to:
   - Post-secondary education expenses.
   - Estimated tax payments.
   - Contributions to a SEP IRA, rollovers from a SEP IRA, and/or a backdoor Roth conversion.
-  - Itemized deductions (medical expenses and donations).
+  - Itemized deductions (state/local taxes, medical expenses and donations).
 
 With that in mind, the following forms have some amount of support:
-  - Form 1040 (Schedules 1, 4, 5, A, B, CEZ, and SE)
+  - Form 1040 (Schedules 1, 4, 5, A, B, C-EZ, and SE)
   - SEP IRA Contribution Worksheet
   - Child and Other Dependents Credit Worksheet
   - Form 8606 (Non-deductible IRAs)
   - Form 8863 (Education Credits)
 
 The filer is _not_:
-  - A homeowner.
+  - A homeowner, church minister, or farmer.
+  - Owner of bank account or trust in foreign country.
 
 ### Repository Layout
 
