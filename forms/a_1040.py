@@ -66,11 +66,11 @@ def build_data():
                                        form_1040['adjusted_gross_income_cents'])
     utils.add_keyed_float(agi, 'form_1040_line_7', data_dict)
 
-    floor = agi * 0.075
-    utils.add_keyed_float(floor, 'seven_point_five_pct', data_dict)
+    nondeductible_medical_exp = agi * constants.get_value("NONDEDUCTIBLE_MEDICAL_EXPENSE_RATE")
+    utils.add_keyed_float(nondeductible_medical_exp, 'nondeductible_medical_exp', data_dict)
 
-    qualified_medical_expenses = max(0, medical_expenses - floor)
-    utils.add_keyed_float(qualified_medical_expenses, 'qualified_medical_expenses', data_dict)
+    qualified_medical_exp = max(0, medical_expenses - nondeductible_medical_exp)
+    utils.add_keyed_float(qualified_medical_exp, 'qualified_medical_exp', data_dict)
 
     # State and Local Tax = 
     #   1) Amount paid this year on last year's return

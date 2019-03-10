@@ -2,31 +2,36 @@ constants = {}
 
 constants["STANDARD_DEDUCTION"] = { 
 	"2018": {
-		"single":            12000,
-		"married_joint":     24000,
-		"widowed":           24000,
-		"married_separate":  12000,
-		"head_of_household": 18000
+		"single,married_separate": 12000,
+		"married_joint,widowed":   24000,
+		"head_of_household":       18000
 	}
 }
 
 # for senior citizens or blind
 constants["STANDARD_DEDUCTION+"] =  {
 	"2018": {
-		"single":            1600,
-		"married_joint":     1300,
-		"widowed":           1300,
-		"married_separate":  1300,
-		"head_of_household": 1600
+		"single,head_of_household":               1600,
+		"married_joint,widowed,married_separate": 1300,
 	}
 }
 
 constants["CAPITAL_GAINS_BRACKETS"] = {
 	"2018": {
-		"single": [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 425800, "tax_rate": 0.20}],
+		"single":                [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 425800, "tax_rate": 0.20}],
 		"married_joint,widowed": [{"threshold": 77200, "tax_rate": 0.15}, {"threshold": 479000, "tax_rate": 0.20}],
-		"head_of_household": [{"threshold": 51700, "tax_rate": 0.15}, {"threshold": 452400, "tax_rate": 0.20}],
-		"married_separate": [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 239500, "tax_rate": 0.20}]
+		"head_of_household":     [{"threshold": 51700, "tax_rate": 0.15}, {"threshold": 452400, "tax_rate": 0.20}],
+		"married_separate":      [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 239500, "tax_rate": 0.20}]
+	}
+}
+
+# as percentage of adjusted gross incomes
+constants["NONDEDUCTIBLE_MEDICAL_EXPENSE_RATE"] = {
+	"2018": {
+		"all": 0.075 
+	},
+	"2019": {
+		"all": 0.100
 	}
 }
 
@@ -34,12 +39,12 @@ constants["STUDENT_LOAN_DEDUCTION"] = {
 	"2018": {
 		"single,married_separate,widowed,head_of_household": {
 			"phaseout_begin_threshold": 65000,
-			"phaseout_end_threshold": 80000,
+			"phaseout_end_threshold":   80000,
 			"max_deduction": 2500
 		},
 		"married_joint": {
 			"phaseout_begin_threshold": 135000,
-			"phaseout_end_threshold": 165000,
+			"phaseout_end_threshold":   165000,
 			"max_deduction": 2500
 		}
 	}
