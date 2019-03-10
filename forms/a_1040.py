@@ -56,7 +56,7 @@ def build_data():
 
     filing_status = data['filing_status'] if 'filing_status' in data else "single"
 
-    form_1040 = s_1040.build_data(short_circuit = 'Schedule A')
+    form_1040 = s_1040.build_data(short_circuit='AGI')
 
     # Medical expenses
     medical_expenses = data['medical_expenses'] if 'medical_expenses' in data else 0

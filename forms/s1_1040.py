@@ -64,7 +64,7 @@ def build_data(f1040_data=None):
     schedule_c  = cez_1040.build_data()
     schedule_se = se_1040.build_data()
     if f1040_data is None:
-      f1040_data = s_1040.build_data(short_circuit="Schedule 1")
+      f1040_data = s_1040.build_data(short_circuit="total_income")
     sep_calcs   = worksheet__sep_ira.build_data()
 
     data_dict = {

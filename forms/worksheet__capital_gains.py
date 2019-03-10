@@ -37,7 +37,7 @@ data = utils.parse_values()
 
 def build_data():
 
-    form_1040  = s_1040.build_data(short_circuit = 'Tax Worksheet')
+    form_1040  = s_1040.build_data(short_circuit="taxable_income")
     schedule_1 = s1_1040.build_data()
 
     data_dict = {}

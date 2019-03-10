@@ -103,6 +103,12 @@ def build_long_schedule_se(data_dict, se_income):
                           data_dict)
 
     if line_4 < 400:
+      utils.add_keyed_float(0,
+                          '_se_tax',
+                          data_dict)
+      utils.add_keyed_float(0,
+                          '_se_deduction',
+                          data_dict)
       return
 
     line_6 = line_4

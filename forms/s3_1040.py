@@ -25,44 +25,56 @@ In addition, you can specify any foreign tax paid by including
 1099_div's and setting the 'foreign_tax' key.
 '''
 
-
 from . import utils
+from . import f_8863_i
 
 data = utils.parse_values()
 
 ###################################
 
-def build_data():
+def build_data(short_circuit=''):
 
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn'],
-        }
+      'name' : data['name'],
+      'ssn'  : data['ssn']
+    }
+
+    accrued_credits = 0.0
 
     # Foreign tax credit
     if '1099_div' in data:
-        foreign_tax = 0.0
-        for each in data['1099_div']:
-            if 'foreign_tax' in each:
-                foreign_tax += each['foreign_tax']
-        utils.add_keyed_float(foreign_tax,
-                              'foreign_tax_credit',
-                              data_dict)
+        foreign_tax_credit = 0.0
+        foreign_tax_credit += sum([asset['foreign_tax'] if 'foreign_tax' in asset else 0 for asset in data['1099_div']])
+        utils.add_keyed_float(foreign_tax_credit, 'foreign_tax_credit', data_dict)
+        accrued_credits += foreign_tax_credit
+
+    if short_circuit == "foreign_tax_credit":
+      return accrued_credits, data_dict
+
+    if short_circuit == "child_care":
+      return accrued_credits, data_dict
+
+    # Education credits
+    if utils.has_education(data):
+      education_credits = f_8863_i.build_data(data["postsecondary_education"])
+      if "_nonrefundable_total" in education_credits:
+        utils.add_keyed_float(education_credits["_nonrefundable_total"], 'education', data_dict)
+        accrued_credits += education_credits["_nonrefundable_total"]
+
+    if short_circuit == "education":
+      return accrued_credits, data_dict
 
     # Sum up credits
-    credits = ['foreign_tax_credit',
-               'child_care',
-               'education',
-               'retirement',
-               'energy',
-               'other_credits']
+    credit_sources = ['foreign_tax_credit',
+                      'child_care',
+                      'education',
+                      'retirement',
+                      'energy',
+                      'other_credits']
     
-    total = utils.add_fields(data_dict, credits)
-    utils.add_keyed_float(total,
-                          'nonrefundable_total',
-                          data_dict )
+    utils.add_keyed_float(utils.add_fields(data_dict, credit_sources), 'nonrefundable_total', data_dict)
 
-    data_dict['_total_credits'] = total
+    data_dict['_total_credits'] = utils.dollars_cents_to_float(data_dict['nonrefundable_total_dollars'], data_dict['nonrefundable_total_cents'])
 
     return data_dict
 

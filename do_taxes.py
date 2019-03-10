@@ -25,6 +25,7 @@ import forms.se_1040
 import forms.cez_1040
 import forms.worksheet__sep_ira
 import forms.f_8606
+import forms.f_8863_iii
 import forms.s_1040v
 import forms.worksheet__capital_gains
 import forms.worksheet__child_credit
@@ -60,18 +61,24 @@ def fill_forms():
     output_file, f1040_data = forms.s_1040.fill_in_form()
     output_pdfs.append(output_file)
 
-    # Supporting forms/schedules/worksheets
+    # Supporting forms/schedules/worksheets to attach
     additional_forms_to_attach = [forms.s1_1040, forms.s3_1040, forms.s4_1040, forms.s5_1040, forms.worksheet__capital_gains, forms.a_1040, forms.b_1040, forms.cez_1040, forms.se_1040]
     if '1099_r' in data:
         additional_forms_to_attach.extend([forms.f_8606, forms.worksheet__sep_ira])
 
-    # If tax is owed, attach voucher
-    if "_owed" in f1040_data and f1040_data["_owed"] > 0:
-        additional_forms_to_attach.append(forms.s_1040v)
-
     for form in additional_forms_to_attach:
         output_file = form.fill_in_form()
         output_pdfs.append(output_file)
+
+    if forms.utils.has_education(data):
+        education_data = data['postsecondary_education']
+        output_pdfs.append(forms.f_8863_i.fill_in_form(education_data))
+        for student in education_data:
+            output_pdfs.append(forms.f_8863_iii.fill_in_form(student))
+
+    # If tax is owed, attach voucher
+    if "_owed" in f1040_data and f1040_data["_owed"] > 0:
+        output_pdfs.append(forms.s_1040v.fill_in_form())
 
     # Merge all forms
     merger = PdfFileMerger()

@@ -53,21 +53,21 @@
 
     "w2": [
     {
-        "income": 124000,
-        "ss_wages": 124000,
-        "federal_withheld": 19000,
-        "state_withheld": 5100
+        "income": 114000,
+        "ss_wages": 114000,
+        "federal_withheld": 16000,
+        "state_withheld": 4600
     },
     {
-        "income": 65000,
-        "ss_wages": 65000,
-        "federal_withheld": 8900,
-        "state_withheld": 2100
+        "income": 61000,
+        "ss_wages": 61000,
+        "federal_withheld": 6900,
+        "state_withheld": 1700
     }],
 
     "1099_misc": [
     {
-        "other_income": 25012
+        "other_income": 1510
     }],
 
     "qbi_deduction": true,
@@ -107,16 +107,16 @@
     "1099_div": [
     {
         "institution": "Bank 1",
-        "total_ordinary": 500.50,
-        "total_qualified": 600.60,
-        "total_capital_gain": 700.70,
+        "total_ordinary": 200.20,
+        "total_qualified": 300.30,
+        "total_capital_gain": 400.40,
         "foreign_tax": 10.00
     },
     {
         "institution": "Bank 2",
-        "total_ordinary": 800.50,
-        "total_qualified": 900.60,
-        "total_capital_gain": 1000.70,
+        "total_ordinary": 600.60,
+        "total_qualified": 700.70,
+        "total_capital_gain": 800.80,
         "foreign_tax": 20.00
     },
     {
@@ -130,7 +130,7 @@
     "business_exp": [
     {
         "description": "Expense 1",
-        "amount": 100.01
+        "amount": 50.01
     },
     {
         "description": "Expense 2",
@@ -138,8 +138,39 @@
     },
     {
         "description": "Expense 3",
-        "amount": 100.01
+        "amount": 150.01
     }],
+
+    "postsecondary_education": [
+        {
+            "student": "Lily L Potter",
+            "ssn": "345-67-8901",
+            "institution": "Hogwarts School of Witchcraft and Wizardry",
+            "address": "Strand, London WC2R 2LS, United Kingdom",
+            "ein": "12-3456789",
+            "is_undergrad": "yes",
+            "expenses": 3000
+        },
+        {
+            "student": "Albus S Potter",
+            "ssn": "456-78-9012",
+            "institution": "Ilvermorny School of Witchcraft and Wizardry",
+            "address": "70 Washington Square South, New York, NY 10003",
+            "ein": "23-4567890",
+            "is_undergrad": "yes",
+            "expenses": 7000
+        },
+        {
+            "student": "James S Potter",
+            "ssn": "567-89-0123",
+            "institution": "Harvard Medical School",
+            "address": "5 Shattuck St, Boston, MA 02115",
+            "ein": "34-5678901",
+            "is_undergrad": "no",
+            "expenses": 54320
+        }
+    ],
+    "student_loan_interest": 100.50,
 
     "vehicle":
     {
@@ -156,19 +187,19 @@
     "estimated_fed": [
     {
         "date": "2018-04-15",
-        "amount": 2000
+        "amount": 200
     },
     {
         "date": "2018-06-15",
-        "amount": 2000
+        "amount": 200
     },
     {
         "date": "2018-09-15",
-        "amount": 2000
+        "amount": 200
     },
     {
         "date": "2019-01-15",
-        "amount": 2000
+        "amount": 200
     }],
 
     "estimated_state": [
@@ -194,7 +225,6 @@
     "medical_expenses": 500.50,
 
     "educator_expenses": 0,
-    "student_loan_interest": 100.50,
     "traditional_ira_deduction": 5500,
     "health_savings_acct_deduction": 0,
 
