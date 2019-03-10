@@ -21,6 +21,15 @@ constants["STANDARD_DEDUCTION+"] =  {
 	}
 }
 
+constants["CAPITAL_GAINS_BRACKETS"] = {
+	"2018": {
+		"single": [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 425800, "tax_rate": 0.20}],
+		"married_joint,widowed": [{"threshold": 77200, "tax_rate": 0.15}, {"threshold": 479000, "tax_rate": 0.20}],
+		"head_of_household": [{"threshold": 51700, "tax_rate": 0.15}, {"threshold": 452400, "tax_rate": 0.20}],
+		"married_separate": [{"threshold": 38600, "tax_rate": 0.15}, {"threshold": 239500, "tax_rate": 0.20}]
+	}
+}
+
 constants["STUDENT_LOAN_DEDUCTION"] = {
 	"2018": {
 		"single,married_separate,widowed,head_of_household": {
