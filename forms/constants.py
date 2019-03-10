@@ -25,6 +25,17 @@ constants["CAPITAL_GAINS_BRACKETS"] = {
 	}
 }
 
+constants["SE_TAXES"] = {
+	"2018": {
+		"all": {
+			"untaxed_threshold": 400,
+			"social_security_rate": 0.124,
+			"medicare_rate":        0.029,
+			"long_schedule_threshold": 128400
+		}
+	}
+}
+
 # as percentage of adjusted gross incomes
 constants["NONDEDUCTIBLE_MEDICAL_EXPENSE_RATE"] = {
 	"2018": {
