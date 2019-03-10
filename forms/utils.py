@@ -93,7 +93,7 @@ def parse_keyfile(kf):
     with open(os.path.join('keyfiles/%s' % constants.TAX_YEAR, kf)) as fd:
         lines = fd.readlines()
         
-        lines = [ x.strip() for x in lines ]
+        lines = [x.strip() for x in lines]
         parsed = []
         for i in range(len(lines)):
             line = lines[i]
@@ -123,13 +123,13 @@ Largely based on
 https://medium.com/@zwinny/filling-pdf-forms-in-python-the-right-way-eb9592e03dba
 '''
 
-def get_overlay(basename, data_dict, keyfile):
+def get_overlay(basename, data_dict, keyfile, output_name):
     '''
     Create an overlay layer containing the text we want,
     where we want it.
     '''
     input_pdf_path = os.path.join('templates/%s' % constants.TAX_YEAR, basename)
-    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
+    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, output_name)
 
     template_pdf = pdfrw.PdfReader(input_pdf_path)
     annotations = template_pdf.pages[0][ANNOT_KEY]
@@ -198,21 +198,25 @@ def get_overlay(basename, data_dict, keyfile):
                                     if cents >= 50:
                                         data_dict[readable] += 1
                                     value = str(data_dict[readable])
-                                    value = commaify(value)
+                                    if type(data_dict[readable]) in [type(0.0), type(0)]:
+                                        value = commaify(value)
                                     value = ' ' * (data_dict['_width'] - len(value)) + value
                                 else:
                                     value = str(data_dict[readable])
-                                    value = commaify(value)
+                                    if type(data_dict[readable]) in [type(0.0), type(0)]:
+                                        value = commaify(value)
                             else:
                                 if readable.endswith('_cents'):
                                     value = str(data_dict[readable]).zfill(2)
                                 elif readable.endswith('_dollars'):
                                     value = str(data_dict[readable])
-                                    value = commaify(value)
+                                    if type(data_dict[readable]) in [type(0.0), type(0)]:
+                                        value = commaify(value)
                                     value = ' ' * (data_dict['_width'] - len(value)) + value
                                 else:
                                     value = str(data_dict[readable])
-                                    value = commaify(value)
+                                    if type(data_dict[readable]) in [type(0.0), type(0)]:
+                                        value = commaify(value)
 
                         # This is a hack. But so is telling people to put text in places
                         # where there aren't fillable fields.
@@ -297,21 +301,35 @@ def merge(overlay, basename):
     return form
 
 
-def write_fillable_pdf(basename, data_dict, keyfile):
-    print('[+] %s' % (basename))
+def write_fillable_pdf(basename, data_dict, keyfile, output_name=None):
+    if output_name is None:
+        output_name = basename
+    print('[+] %s' % (output_name))
     # Generate our layer of text
-    canvas = get_overlay(basename, data_dict, keyfile)
+    canvas = get_overlay(basename, data_dict, keyfile, output_name)
     # Merge it with the original PDF
     form = merge(canvas, basename)
     # Write out the result
-    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, basename)
+    output_pdf_path = os.path.join('filled/%s' % constants.TAX_YEAR, output_name)
     with open(output_pdf_path, 'wb') as f:
         f.write(form.read())
     # Circle back and handle grouped buttons
-    do_buttons(basename, data_dict, keyfile)
+    do_buttons(output_name, data_dict, keyfile)
 
     return output_pdf_path
 
+
+'''
+Helper functions to determine if certain tax situations apply.
+'''
+
+def has_education(data):
+    return "postsecondary_education" in data and len(data["postsecondary_education"])
+
+def has_dependents(data):
+    return "dependents" in data and len(data["dependents"])
+
+    
 def get_tax_bracket(filing_status="single", year=constants.TAX_YEAR):
     tax_brackets = json.load(open('tables/federal_brackets.json'))[year]
     filing_status = filing_status.lower()

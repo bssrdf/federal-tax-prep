@@ -72,6 +72,7 @@ from . import s3_1040
 from . import s4_1040
 from . import s5_1040
 from . import f_8606
+from . import f_8863_i
 from . import worksheet__capital_gains
 from . import worksheet__child_credit
 from . import constants
@@ -127,13 +128,18 @@ def compute_standard_deduction(f1040_data=data, filing_status="single"):
 
     return deduction
 
+def has_dependents(data):
+    return "dependents" in data and len(data["dependents"])
+
+def has_education(data):
+    return "postsecondary_education" in data and len(data["postsecondary_education"])
+
 def build_data(short_circuit = ''):
 
     data_dict = {}
 
     schedule_b  = b_1040.build_data()
     schedule_1 = s1_1040.build_data(f1040_data=data_dict)
-    schedule_3 = s3_1040.build_data()
     schedule_4 = s4_1040.build_data()
     schedule_5 = s5_1040.build_data()
 
@@ -170,7 +176,7 @@ def build_data(short_circuit = ''):
             data_dict['spouse_senior_citizen_y'] = True
 
     # Fill in dependents data
-    if "dependents" in data:
+    if has_dependents(data):
         for n, dependent in enumerate(data["dependents"]):
             if n >= 4:
                 raise Error("Too many dependents claimed!")
@@ -235,7 +241,7 @@ def build_data(short_circuit = ''):
     total_income = utils.dollars_cents_to_float(data_dict['total_income_dollars'],
                                                 data_dict['total_income_cents'])
 
-    if short_circuit == "Schedule 1":
+    if short_circuit == "total_income":
         return data_dict
 
     # Recompute Schedule 1 adjustments based on total income
@@ -246,7 +252,8 @@ def build_data(short_circuit = ''):
     agi = total_income - adjustments
     utils.add_keyed_float(agi, 'adjusted_gross_income', data_dict)
 
-    if short_circuit == 'Schedule A':
+    # Forms that require Line 7 (AGI)
+    if short_circuit == 'AGI':
         return data_dict
 
     # Note: we can't calculate the Schedule A until after this point,
@@ -267,11 +274,13 @@ def build_data(short_circuit = ''):
     # QBI deduction. 
     qbi_deduction = qualified_business_deduction(taxable_income, schedule_1, filing_status)
     taxable_income -= qbi_deduction
+    taxable_income = max(taxable_income, 0)
 
     utils.add_keyed_float(qbi_deduction, 'qualified_business_deductions', data_dict)
     utils.add_keyed_float(taxable_income, 'taxable_income', data_dict)
 
-    if short_circuit == 'Tax Worksheet':
+    # Forms that require Line 10 (Taxable income)
+    if short_circuit == 'taxable_income':
         return data_dict
 
     worksheet = worksheet__capital_gains.build_data()
@@ -280,11 +289,16 @@ def build_data(short_circuit = ''):
 
     utils.add_keyed_float(tax_due, 'line_11', data_dict)
 
+    # Forms that require Line 11 (Tax due)
+    if short_circuit == 'tax_due':
+        return data_dict
+
     # Child Credit relies on Line 11
     if short_circuit == 'Child Credit':
         data_dict["dependents"] = data["dependents"]
         return data_dict
 
+    schedule_3 = s3_1040.build_data()
     data_dict['schedule_3_added_y'] = True
     utils.add_keyed_float(schedule_3['_total_credits'],
                           'schedule_3',
@@ -293,7 +307,7 @@ def build_data(short_circuit = ''):
                           'nonrefundable_credits',
                           data_dict)
 
-    if "dependents" in data:
+    if has_dependents(data):
         dependent_credit_data = worksheet__child_credit.build_data()
         data_dict["dependent_tax_credit"] = str(int(round(dependent_credit_data["_total_credits"]))) + ' '
         for n, dependent in enumerate(dependent_credit_data["dependents"]):
@@ -311,31 +325,31 @@ def build_data(short_circuit = ''):
     line_13 = tax_due - utils.dollars_cents_to_float(data_dict['nonrefundable_credits_dollars'],
                                                     data_dict['nonrefundable_credits_cents'])
     line_13 = max(line_13, 0)
-
     utils.add_keyed_float(line_13, 'line_13', data_dict)
 
     other_taxes = utils.dollars_cents_to_float(schedule_4['total_other_taxes_dollars'],
                                                schedule_4['total_other_taxes_cents'])
-
     utils.add_keyed_float(other_taxes, 'other_taxes', data_dict)
 
     total_tax = other_taxes + line_13
-
     utils.add_keyed_float(total_tax, 'total_tax', data_dict)
 
     federal_withheld = sum([x['federal_withheld'] for x in data['w2']])
-
     utils.add_keyed_float(federal_withheld, 'withheld', data_dict)
 
     total_credits = utils.dollars_cents_to_float(schedule_5['total_credits_dollars'],
                                                  schedule_5['total_credits_cents'])
-
     data_dict['refundable_schedule_5'] = str(int(round(total_credits, 0))) #'%.2f' % (total_credits)
+
+    if has_education(data):
+        education_credit_data = f_8863_i.build_data(data["postsecondary_education"])
+        if "_refundable_credits" in education_credit_data:
+            total_credits += education_credit_data["_refundable_credits"]
+            data_dict['refundable_8863'] = str(int(round(education_credit_data["_refundable_credits"])))
 
     utils.add_keyed_float(total_credits, 'refundable', data_dict)
 
     payments = total_credits + federal_withheld
-
     utils.add_keyed_float(payments, 'total_payments', data_dict)
 
     if payments > total_tax:

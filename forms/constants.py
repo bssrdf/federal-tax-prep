@@ -49,6 +49,35 @@ constants["DEPENDENTS_CREDIT_AMT"] = {
 	}
 }
 
+constants["EDUCATION_CREDIT"] = {
+	"2018": {
+		"single,widowed,married_separate,head_of_household": {
+			"refundable_income_threshold": 90000,
+			"refundable_phaseout_range":   10000,
+			"refundable_rate": 0.4,
+			"max_refundable_expense": 4000,
+			"fully_covered_refundable_expense": 2000,
+			"partially_covered_refundable_rate": 0.25,
+			"max_nonrefundable_credit": 10000,
+			"nonrefundable_rate": 0.2,
+			"nonrefundable_income_threshold": 67000,
+			"nonrefundable_phaseout_range":   10000
+		},
+		"married_joint": {
+			"refundable_income_threshold": 180000,
+			"refundable_phaseout_range":    20000,
+			"refundable_rate": 0.4,
+			"max_refundable_claim": 4000,
+			"fully_covered_refundable_expense": 2000,
+			"partially_covered_refundable_rate": 0.25,
+			"max_nonrefundable_credit": 10000,
+			"nonrefundable_rate": 0.2,
+			"nonrefundable_income_threshold": 134000,
+			"nonrefundable_phaseout_range" :   20000
+		}
+	}
+}
+
 constants["QBI_THRESHOLD"] = {
 	"2018": {
 		"single,widowed,married_separate,head_of_household": 157500,
