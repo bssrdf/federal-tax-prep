@@ -61,22 +61,27 @@ def compute_student_loan_deduction(interest_amt, agi, filing_status):
     
 def build_data(f1040_data=None):
 
-    schedule_c  = cez_1040.build_data()
-    schedule_se = se_1040.build_data()
+    schedule_c, schedule_se, sep_ira = None, None, None
+
+    if utils.has_self_employment(data):
+      schedule_c  = cez_1040.build_data()
+      schedule_se = se_1040.build_data()
+      sep_ira = worksheet__sep_ira.build_data()
+    
     if f1040_data is None:
       f1040_data = s_1040.build_data(short_circuit="total_income")
-    sep_calcs   = worksheet__sep_ira.build_data()
-
+    
     data_dict = {
-        'name'             : data['name'],
-        'ssn'              : data['ssn'],
+        'name' : data['name'],
+        'ssn'  : data['ssn'],
     }
 
     # === Additional Income === #
 
     # Business income
-    data_dict['business_dollars'] = schedule_c['net_profit_dollars']
-    data_dict['business_cents'] = schedule_c['net_profit_cents']
+    if schedule_c is not None:
+      data_dict['business_dollars'] = schedule_c['net_profit_dollars']
+      data_dict['business_cents'] = schedule_c['net_profit_cents']
 
     # Capital gains
     if '1099_div' in data:
@@ -109,12 +114,14 @@ def build_data(f1040_data=None):
       utils.add_keyed_float(data['health_savings_acct_deduction'], 'hsa', data_dict)
 
     # Self-employed deduction
-    data_dict['self_employment_dollars'] = schedule_se['_se_deduction_dollars']
-    data_dict['self_employment_cents'] = schedule_se['_se_deduction_cents']
+    if schedule_se is not None:
+      data_dict['self_employment_dollars'] = schedule_se['_se_deduction_dollars']
+      data_dict['self_employment_cents'] = schedule_se['_se_deduction_cents']
 
     # SEP IRA
-    data_dict['sep_dollars'], data_dict['sep_cents'] =\
-        utils.float_to_dollars_cents(float(sep_calcs['final_contrib_amt']))
+    if sep_ira is not None:
+      data_dict['sep_dollars'], data_dict['sep_cents'] =\
+          utils.float_to_dollars_cents(float(sep_ira['final_contrib_amt']))
 
     # Traditional IRA
     if 'traditional_ira_deduction' in data:

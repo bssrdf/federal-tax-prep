@@ -128,12 +128,6 @@ def compute_standard_deduction(f1040_data=data, filing_status="single"):
 
     return deduction
 
-def has_dependents(data):
-    return "dependents" in data and len(data["dependents"])
-
-def has_education(data):
-    return "postsecondary_education" in data and len(data["postsecondary_education"])
-
 def build_data(short_circuit = ''):
 
     data_dict = {}
@@ -176,7 +170,7 @@ def build_data(short_circuit = ''):
             data_dict['spouse_senior_citizen_y'] = True
 
     # Fill in dependents data
-    if has_dependents(data):
+    if utils.has_dependents(data):
         for n, dependent in enumerate(data["dependents"]):
             if n >= 4:
                 raise Error("Too many dependents claimed!")
@@ -206,7 +200,7 @@ def build_data(short_circuit = ''):
 
     distributions_total   = 0.0
     distributions_taxable = 0.0
-    if '1099_r' in data:
+    if utils.has_deductible_ira(data):
         for x in data['1099_r']:
 
             # Exception 1: Rollovers from IRA -> Qualified Plan / IRA
@@ -307,7 +301,7 @@ def build_data(short_circuit = ''):
                           'nonrefundable_credits',
                           data_dict)
 
-    if has_dependents(data):
+    if utils.has_dependents(data):
         dependent_credit_data = worksheet__child_credit.build_data()
         data_dict["dependent_tax_credit"] = str(int(round(dependent_credit_data["_total_credits"]))) + ' '
         for n, dependent in enumerate(dependent_credit_data["dependents"]):
@@ -341,7 +335,7 @@ def build_data(short_circuit = ''):
                                                  schedule_5['total_credits_cents'])
     data_dict['refundable_schedule_5'] = str(int(round(total_credits, 0))) #'%.2f' % (total_credits)
 
-    if has_education(data):
+    if utils.has_education(data):
         education_credit_data = f_8863_i.build_data(data["postsecondary_education"])
         if "_refundable_credits" in education_credit_data:
             total_credits += education_credit_data["_refundable_credits"]

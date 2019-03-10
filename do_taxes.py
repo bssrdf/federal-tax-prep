@@ -62,9 +62,15 @@ def fill_forms():
     output_pdfs.append(output_file)
 
     # Supporting forms/schedules/worksheets to attach
-    additional_forms_to_attach = [forms.s1_1040, forms.s3_1040, forms.s4_1040, forms.s5_1040, forms.worksheet__capital_gains, forms.a_1040, forms.b_1040, forms.cez_1040, forms.se_1040]
-    if '1099_r' in data:
-        additional_forms_to_attach.extend([forms.f_8606, forms.worksheet__sep_ira])
+    additional_forms_to_attach = [forms.s1_1040, forms.s3_1040, forms.s4_1040, forms.s5_1040, forms.worksheet__capital_gains, forms.a_1040, forms.b_1040]
+    
+    if forms.utils.has_self_employment(data):
+        additional_forms_to_attach.extend([forms.cez_1040, forms.se_1040])
+
+    if forms.utils.has_deductible_ira(data):
+        additional_forms_to_attach.extend([forms.f_8606])
+        if forms.utils.has_self_employment(data):
+            additional_forms_to_attach.extend([forms.worksheet__sep_ira])
 
     for form in additional_forms_to_attach:
         output_file = form.fill_in_form()

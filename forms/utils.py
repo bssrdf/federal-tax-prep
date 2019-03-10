@@ -329,7 +329,12 @@ def has_education(data):
 def has_dependents(data):
     return "dependents" in data and len(data["dependents"])
 
-    
+def has_self_employment(data):
+    return '1099_misc' in data
+
+def has_deductible_ira(data):
+    return '1099_r' in data
+
 def get_tax_bracket(filing_status="single", year=constants.TAX_YEAR):
     tax_brackets = json.load(open('tables/federal_brackets.json'))[year]
     filing_status = filing_status.lower()
